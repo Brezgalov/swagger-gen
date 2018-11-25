@@ -46,8 +46,38 @@ class SwaggerDocGenerator extends Model
         return [
             [['docType', 'docFolder', 'model'], 'required'],
             ['docType', 'in', 'range' => [self::DOC_TYPE_JSON, self::DOC_TYPE_PHP]],
-            ['docFolder', 'validateDocFolder', 'message' => '{attribute} is invalid'],
-            ['model', 'modelValidator', 'message' => '{attribute} is invalid'],
+            ['docFolder', 'validateDocFolder'],
+            ['model', 'modelValidator'],
         ];
+    }
+
+    /**
+     * doc folder validator
+     * @return void
+     */
+    public function validateDocFolder($attr, $params, $validator)
+    {
+        if (!is_dir($this->{$attr})) {
+            $this->addError($attr, $attr . ' is invalid');
+        }
+    }
+
+    /**
+     * validate model type
+     * @return void
+     */
+    public function modelValidator($attr, $params, $validator)
+    {
+        if (!($this->{$attr} instanceof Model)) {
+            $this->addError($attr, $attr . ' is invalid');
+        }
+    }
+
+    /**
+     * create swagger doc from model
+     */
+    public function createDoc()
+    {
+
     }
 }
