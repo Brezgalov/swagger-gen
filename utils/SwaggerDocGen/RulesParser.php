@@ -1,8 +1,10 @@
 <?php
 
-namespace app\modules\SwaggerDocGen\utils;
+namespace app\utils\SwaggerDocGen;
 
-class RulesParser extends \yii\app\BaseObject
+use app\utils\SwaggerDocGen\RuleParsers\IParser;
+
+class RulesParser extends \yii\base\BaseObject
 {
     /**
      * parse result
@@ -11,13 +13,14 @@ class RulesParser extends \yii\app\BaseObject
     protected $metaData = [];
 
     /**
-     * list of parsers callback
+     * list of RuleParsers callback
      * @var array
      */
     protected $parsers = [];
 
     /**
-     * itiniallize
+     * RulesParser constructor.
+     * @param array $config
      */
     public function __construct(array $config = [])
     {
@@ -25,9 +28,21 @@ class RulesParser extends \yii\app\BaseObject
     }
 
     /**
-     * add parser
+     * Add array of IParser to rule RuleParsers
+     * @param array $parsers
      */
-    public function addParser($parser)
+    public function addParsers(array $parsers)
+    {
+        foreach ($parsers as $parser) {
+            $this->addParser($parser);
+        }
+    }
+
+    /**
+     * add parser
+     * @param IParser $parser
+     */
+    public function addParser(IParser $parser)
     {
         $this->parsers[] = $parser;
     }
@@ -64,8 +79,8 @@ class RulesParser extends \yii\app\BaseObject
             return $data;
         }
         $data['fields'] = is_array($rule[0])? $rule[0] : array((string)$rule[0]);
-        foreach($this->parsers as $callback) {
-            call_user_func($callback, $rule, $data['info']);
+        foreach($this->parsers as $parser) {
+            $data['info'] = $parser->parseRule($rule);
         }
         return $data;
     }

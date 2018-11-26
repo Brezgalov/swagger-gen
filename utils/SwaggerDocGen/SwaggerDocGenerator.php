@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\SwaggerDocGen\utils;
+namespace app\utils\SwaggerDocGen;
 
 use yii\base\Model;
 
