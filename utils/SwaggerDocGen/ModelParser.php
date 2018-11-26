@@ -61,7 +61,7 @@ class ModelParser extends BaseObject
      */
     public function getDefinitionName($name)
     {
-        preg_match('/[^\\]+$/', $name, $matches);
+        preg_match('/[^\\\]+$/', $name, $matches);
         return $matches[0];
     }
 
