@@ -55,6 +55,16 @@ class ModelParser extends BaseObject
     }
 
     /**
+     * returns definition meta
+     * @param $name
+     * @return array|null
+     */
+    public function findDefinition($name)
+    {
+        return (@$this->definitions[$this->getDefinitionName($name)])?: null;
+    }
+
+    /**
      * Converts class name to definition name
      * @param string $name
      * @return string
@@ -84,6 +94,10 @@ class ModelParser extends BaseObject
      */
     public function parseArray($name, array $model, array $labels = [])
     {
+        $defExists = $this->findDefinition($name);
+        if (!empty($defExists)) {
+            return $this->getDefinitions();
+        }
         while (array_key_exists(0, $model)) {
             $model = $model[0];
         }
