@@ -59,13 +59,42 @@ class RulesParser extends \yii\base\BaseObject
     }
 
     /**
+     * list of rules for specified scenario
+     * @param Model $model
+     * @param string $scenario
+     */
+    public function getModelRules(Model $model, $scenario = 'default')
+    {
+        $rules = $model->rules();
+        $scenarios = $model->scenarios();
+        if (!array_key_exists($scenario, $scenarios)) {
+            throw new \Exception('Scenario ' . $scenario . ' not found');
+        }
+
+        foreach ($rules as $i => $rule) {
+            if (!is_array($rule[0])) {
+                $rule[0] = [$rule[0]];
+            }
+            $removeRule = true;
+            foreach ($rule[0] as $j => $field) {
+                if (in_array($field, $scenarios[$scenario])) {
+                    $removeRule = false;
+                } else {
+                    unset($rules[$i][0][$j]);
+                }
+            }
+        }
+        return $rules;
+    }
+
+    /**
      * Parse model attributes to definition
      * @param Model $model
      * @return array
      */
     public function parse(Model $model)
     {
-        $rules = $model->rules();
+        $rules = $this->getModelRules($model, $model->scenario);
         foreach($rules as $rule) {
             $data = $this->parseSingleRule($rule);
             foreach ($data['fields'] as $field) {
@@ -92,10 +121,12 @@ class RulesParser extends \yii\base\BaseObject
             return $data;
         }
         $data['fields'] = is_array($rule[0])? $rule[0] : array((string)$rule[0]);
+        if (empty($data['fields'])) {
+            return $data;
+        }
         foreach($this->parsers as $parser) {
             $data['info'] = array_merge($data['info'], $parser->parseRule($rule));
         }
-        var_dump([1, $rule, $data]);
         return $data;
     }
 }

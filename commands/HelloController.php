@@ -37,6 +37,6 @@ class HelloController extends Controller
     public function actionTest()
     {
         $parser = new RulesParser();
-        var_dump($parser->parse(new AModel()));
+        var_dump($parser->parse(new AModel(['scenario' => AModel::SCENARIO_CREATE])));
     }
 }
