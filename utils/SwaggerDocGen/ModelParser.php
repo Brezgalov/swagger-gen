@@ -2,14 +2,13 @@
 
 namespace app\utils\SwaggerDocGen;
 
-use yii\base\BaseObject;
 use yii\base\Model;
 
 /**
  * Parses model to definiton meta data
  * @package app\utils\SwaggerDocGen
  */
-class ModelParser extends BaseObject
+class ModelParser extends BaseParser
 {
     /**
      * store all parsed definitions
@@ -62,17 +61,6 @@ class ModelParser extends BaseObject
     public function findDefinition($name)
     {
         return (@$this->definitions[$this->getDefinitionName($name)])?: null;
-    }
-
-    /**
-     * Converts class name to definition name
-     * @param string $name
-     * @return string
-     */
-    public function getDefinitionName($name)
-    {
-        preg_match('/[^\\\]+$/', $name, $matches);
-        return $matches[0];
     }
 
     /**

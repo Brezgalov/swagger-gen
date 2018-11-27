@@ -2,7 +2,12 @@
 
 namespace app\utils\SwaggerDocGen;
 
+use app\utils\SwaggerDocGen\RuleParsers\IntegerParser;
+use app\utils\SwaggerDocGen\RuleParsers\StringParser;
+use app\utils\SwaggerDocGen\RuleParsers\DoubleParser;
 use app\utils\SwaggerDocGen\RuleParsers\IParser;
+use app\utils\SwaggerDocGen\RuleParsers\RequiredParser;
+use yii\base\Model;
 
 class RulesParser extends \yii\base\BaseObject
 {
@@ -25,6 +30,12 @@ class RulesParser extends \yii\base\BaseObject
     public function __construct(array $config = [])
     {
         parent::__construct($config);
+        $this->addParsers([
+            new RequiredParser(),
+            new StringParser(),
+            new DoubleParser(),
+            new IntegerParser(),
+        ]);
     }
 
     /**
@@ -48,11 +59,13 @@ class RulesParser extends \yii\base\BaseObject
     }
 
     /**
-     * parse rules to get meta
+     * Parse model attributes to definition
+     * @param Model $model
      * @return array
      */
-    public function parse(array $rules)
+    public function parse(Model $model)
     {
+        $rules = $model->rules();
         foreach($rules as $rule) {
             $data = $this->parseSingleRule($rule);
             foreach ($data['fields'] as $field) {
@@ -80,8 +93,9 @@ class RulesParser extends \yii\base\BaseObject
         }
         $data['fields'] = is_array($rule[0])? $rule[0] : array((string)$rule[0]);
         foreach($this->parsers as $parser) {
-            $data['info'] = $parser->parseRule($rule);
+            $data['info'] = array_merge($data['info'], $parser->parseRule($rule));
         }
+        var_dump([1, $rule, $data]);
         return $data;
     }
 }

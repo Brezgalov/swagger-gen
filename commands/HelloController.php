@@ -7,6 +7,8 @@
 
 namespace app\commands;
 
+use app\models\AModel;
+use app\utils\SwaggerDocGen\RulesParser;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
@@ -30,5 +32,11 @@ class HelloController extends Controller
         echo $message . "\n";
 
         return ExitCode::OK;
+    }
+
+    public function actionTest()
+    {
+        $parser = new RulesParser();
+        var_dump($parser->parse(new AModel()));
     }
 }

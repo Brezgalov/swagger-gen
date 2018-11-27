@@ -31,6 +31,18 @@ class SwaggerDocGenerator extends Model
     public $model;
 
     /**
+     * create model scenario
+     * @var string
+     */
+    public $createScenario = 'default';
+
+    /**
+     * update model scenario
+     * @var string
+     */
+    public $updateScenario = 'default';
+
+    /**
      * initialises class
      */
     public function __construct($config = [])
@@ -78,6 +90,11 @@ class SwaggerDocGenerator extends Model
      */
     public function createDoc()
     {
-
+        if(!$this->validate()) {
+            return false;
+        }
+        $model = $this->model;
+        $modelParser = new ModelParser();
+        $definitions = $modelParser->parse($model);
     }
 }
